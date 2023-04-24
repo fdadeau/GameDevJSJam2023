@@ -8,7 +8,7 @@ import { LEVELS } from "./LEVELS.js";
 
 import { audio } from "./audio.js";
 
-const LOADING = -1, MENU = 0, IN_GAME = 10, GAME_OVER = 20, COMPLETED = 30, TIME_OUT = 40; 
+const LOADING = 0, MENU = 5, IN_GAME = 10, GAME_OVER = 20, COMPLETED = 30, TIME_OUT = 40; 
 
 const START_LEVEL = 3;
 

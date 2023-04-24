@@ -57,6 +57,18 @@ body {
     border: none;
     border: solid 1px #000;
     background-color: black;
-    height: 99vh;
-	width: calc(99vh * 640 / 400);
+    
+}
+
+@media screen and (orientation: landscape) {
+	#cvs {
+		height: 99vh;
+		width: calc(99vh * 640 / 400);
+	}
+}
+@media screen and (orientation: portrait) {
+	#cvs {
+		width: 99vw;
+		height: calc(99vw * 400 / 640);
+	}
 }

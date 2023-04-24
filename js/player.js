@@ -24,7 +24,7 @@ const ANIMATION_TIME = 1000;
 const NORMAL = 0, DISAPPEARING = 1, NOT_THERE = 2, APPEARING = 3;
 
 /** Draw hitbox */
-const DEBUG = true;
+const DEBUG = false;
 
 export class Player {
 
@@ -137,6 +137,7 @@ export class Player {
 
         // if not moving, return
         if (!keys.right && !keys.left && this.onGround && this.speedX == 0) {
+            this.checkWallCollisions(level);
             return;
         }
 
@@ -148,6 +149,9 @@ export class Player {
             this.checkAboveCollision(level);
         }
         this.updateXPosition(dt, level);
+
+        this.checkWallCollisions(level);
+
         this.onGround = this.isOnTheGround(level);
         this.onPlatform = this.isOnPlatform(level);
 
@@ -257,29 +261,57 @@ export class Player {
         }
     }
 
+    collidesWalls(level, dir) {
+        for (let i=0; i < level.slidingWalls.length; i++) {
+            let w = level.slidingWalls[i];
+            if (this.x + dir * PLAYER_W >= w.x && this.x + dir * PLAYER_W <= w.x + w.width && this.y >= w.y && this.y <= w.y + w.height) {
+                return w;
+            }
+        }
+        return false;
+    }
+
+    checkWallCollisions(level) {
+        let wL = this.collidesWalls(level,-1);
+        let wR = this.collidesWalls(level,1); 
+        if (wL && wR) {
+            this.dead = true;
+        }
+        else if (wL) {
+            this.x = wL.x + wL.width + PLAYER_W;
+            this.speedX = 0;
+        }
+        else if (wR) {
+            this.x = wR.x - PLAYER_W;
+            this.speedX = 0;
+        }
+    }
+
 
 
     render(ctx, x, y) {
         ctx.fillStyle = "#000";
+
+        // drawing of the character
+        ctx.strokeStyle = "#000";
+        let scale = 1;
+        if (this.animation.type == APPEARING) {
+            scale = 1 - this.animation.remaining / ANIMATION_TIME;
+        }
+        else if (this.animation.type == DISAPPEARING) {
+            scale = this.animation.remaining / ANIMATION_TIME;
+        }
+        if (this.animation.type != NOT_THERE) {
+            ctx.strokeRect(x - PLAYER_W * scale | 0, y - PLAYER_H * scale - (1-scale)*PLAYER_H/2 | 0, PLAYER_W*2*scale, PLAYER_H*scale);
+        }
+        // debug info (pressed keys)
         if (DEBUG) {
-            ctx.strokeStyle = "#000";
-            let scale = 1;
-            if (this.animation.type == APPEARING) {
-                scale = 1 - this.animation.remaining / ANIMATION_TIME;
-            }
-            else if (this.animation.type == DISAPPEARING) {
-                scale = this.animation.remaining / ANIMATION_TIME;
-            }
-            if (this.animation.type != NOT_THERE) {
-                ctx.strokeRect(x - PLAYER_W * scale | 0, y - PLAYER_H * scale - (1-scale)*PLAYER_H/2 | 0, PLAYER_W*2*scale, PLAYER_H*scale);
-            }
             ctx.textAlign = "left";
             ctx.font = "12px arial";
             ctx.fillText(`x=${this.x.toFixed(2)},y=${this.y.toFixed(2)},onGound=${this.onGround},onPlatform=${this.onPlatform != null},complete=${this.complete}`, 10, 20);
         }
         ctx.textAlign = "center";
         ctx.fillText((this.timeWarp/1000).toFixed(1) + "s", WIDTH / 2, 20);
-
     }
 
 }

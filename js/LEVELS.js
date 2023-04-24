@@ -4,7 +4,7 @@ export const LEVELS = {
         size: 40,
         time: 20,
         player: {l: 12, c: 2},
-        platforms: [],
+        obstacles: [],
         exit: { l: 14, c: 22 } 
     },
     2 : { 
@@ -12,7 +12,7 @@ export const LEVELS = {
         size: 40,
         time: 20,
         player: {l: 1, c: 2},
-        platforms: [],
+        obstacles: [],
         exit: { l: 14, c: 22 } 
     },
     3 : { 
@@ -20,10 +20,19 @@ export const LEVELS = {
         size: 40,
         time: 200,
         player: {l: 12, c: 2},
-        platforms: [ 
-            {x: 12*40, y: 10*40, w: 80, h: 10, dX: 0, dY: 180, cycle: 3000 }, 
-            {x: 20*40, y: 2*40, w: 80, h: 10, dX: 0, dY: 180, cycle: 3000 }, 
-            {x: 20*40, y: 6*40, w: 80, h: 10, dX: 0, dY: 180, cycle: 3000 }, 
+        obstacles: [ 
+            // platforms
+            {type: "Platform", x: 12*40, y: 10*40, w: 80, h: 10, dX: 0, dY: 180, cycle: 3000 }, 
+            {type: "Platform", x: 20*40, y: 2*40, w: 80, h: 10, dX: 0, dY: 180, cycle: 3000 }, 
+            {type: "Platform", x: 20*40, y: 6*40, w: 80, h: 10, dX: 0, dY: 180, cycle: 3000 }, 
+            // sliding walls
+            {type: "SlidingWall", x: 10*40, y: 12*40, w: 10, h: 120, dX: -300, dY: 0, cycle: 3000 }, 
+            // blinking platforms
+            {type: "BlinkingPlatform", x: 3*40, y: 10*40, w: 120, h: 10, dX: 0, dY: 0, cycle: 3000, delay: 0 }, 
+            {type: "BlinkingPlatform", x: 2*40, y: 12.5*40, w: 120, h: 10, dX: 0, dY: 0, cycle: 3000, delay: 1500 }, 
+            {type: "BlinkingPlatform", x: 4.5*40, y: 2.5*40, w: 120, h: 10, dX: 0, dY: 0, cycle: 2000, delay: 0 }, 
+            {type: "BlinkingPlatform", x: 8*40, y: 2.5*40, w: 120, h: 10, dX: 0, dY: 0, cycle: 2000, delay: 0 }, 
+            {type: "BlinkingPlatform", x: 11.5*40, y: 2.5*40, w: 120, h: 10, dX: 0, dY: 0, cycle: 2000, delay: 0 }, 
         ],
         exit: { l: 2, c: 2 } 
     },
@@ -32,7 +41,7 @@ export const LEVELS = {
         size: 40,
         player: {l: 16, c: 0},
         time: 20,
-        platforms: [ 
+        obstacles: [ 
             {x: 22*40, y: 16*40, w: 80, h: 10, dX: 0, dY: 180, cycle: 2000 }, 
             {x: 23*40, y: 13*40, w: 80, h: 10, dX: 0, dY: 180, cycle: 2000 }, 
         ],
@@ -115,7 +124,7 @@ function MAP_TUTO3() {
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],

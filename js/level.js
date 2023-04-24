@@ -10,6 +10,8 @@ import { Player } from "./player.js";
 
 import { audio } from "./audio.js";       
 
+import { Platform, SlidingWall, BlinkingPlatform } from "./CyclicEntity.js";
+
 export class Level {
 
     constructor(n) {
@@ -17,11 +19,19 @@ export class Level {
         this.size = LEVELS[n].size;
         this.exit = LEVELS[n].exit;
         this.time = LEVELS[n].time * 1000;
+
         this.world = { width: this.map[0].length * this.size, height: this.map.length * this.size };
         this.background = makeBackground(LEVELS[n]);
         this.player = new Player((0.5+LEVELS[n].player.c) * this.size, LEVELS[n].player.l * this.size - 1);
+        
         // initializing solid walls/plaforms
-        this.platforms = LEVELS[n].platforms.map(p => new Platform(p.x, p.y, p.w, p.h, p.dX, p.dY, p.cycle));
+        this.platforms = LEVELS[n].obstacles.filter(e => e.type == "Platform").map(p => new Platform(p.x, p.y, p.w, p.h, p.dX, p.dY, p.cycle));
+        LEVELS[n].obstacles.filter(e => e.type == "BlinkingPlatform").forEach(p => {
+            this.platforms.push(new BlinkingPlatform(p.x, p.y, p.w, p.h, p.dX, p.dY, p.cycle, p.delay));
+        });
+        this.slidingWalls = LEVELS[n].obstacles.filter(e => e.type == "SlidingWall").map(p => new SlidingWall(p.x, p.y, p.w, p.h, p.dX, p.dY, p.cycle));
+        
+        // launch audio
         audio.playSound("tictac", "tic", 0.3, true);
     }
 
@@ -36,6 +46,7 @@ export class Level {
         this.time -= dt;
         if (!this.player.isFrozen()) {
             this.platforms.forEach(p => p.update(dt));
+            this.slidingWalls.forEach(w => w.update(dt));
         }
         if (this.time < 0) {
             this.time = 0;
@@ -63,9 +74,8 @@ export class Level {
         ctx.drawImage(this.background, srcX, srcY, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT);
 
         // draw platforms
-        this.platforms.forEach(p => {
-            p.render(ctx, srcX, srcY);
-        });
+        this.platforms.forEach(p => p.render(ctx, srcX, srcY));
+        this.slidingWalls.forEach(w => w.render(ctx, srcX, srcY));
 
         // determine player's position in screen
         let playerX = this.player.x - srcX;
@@ -111,56 +121,6 @@ export class Level {
 
 }
 
-
-class Platform {
-
-    /**
-     * Build a cyclic-platform. 
-     * @param {Number} x start position (X coordinate)
-     * @param {Numver} y start position (Y coordinate) 
-     * @param {Number} w hitbox width
-     * @param {Number} h hitbox height 
-     * @param {Number} dX movement on the horizontal axis
-     * @param {Number} dY movement on the vertical axis
-     * @param {Number} cycleT time for a full cycle (in ms)
-     */
-    constructor(x,y,w,h,dX,dY,cycleT) {
-        this.x = this.initX = x;
-        this.y = this.initY = y;
-        this.width = w;
-        this.height = h;
-        this.dX = dX;
-        this.dY = dY;
-        this.timer = 0;
-        this.cycle = cycleT;
-    }
-
-    update(dt) {
-        this.timer += dt;
-        if (this.timer < 0) {
-            this.timer += this.cycle;
-        }
-        else if (this.timer > this.cycle) {
-            this.timer = this.timer % this.cycle;
-        }
-        let percentage = this.timer / this.cycle;
-        if (percentage > 0.5) {
-            percentage = 0.5 - (percentage - 0.5);
-        }
-        this.x = this.initX + percentage * this.dX;
-        this.y = this.initY + percentage * this.dY;
-    }
-
-    intersects(x, y, w) {
-        return x + w >= this.x && x - w <= this.x + this.width && y >= this.y && y <= this.y + 2*this.height;
-    }
-
-    render(ctx, srcX, srcY) {
-        ctx.fillStyle = "#005";
-        ctx.fillRect(this.x - srcX, this.y - srcY, this.width, this.height);
-    }
-
-}
 
 
 
