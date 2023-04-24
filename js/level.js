@@ -22,7 +22,7 @@ export class Level {
         this.player = new Player((0.5+LEVELS[n].player.c) * this.size, LEVELS[n].player.l * this.size - 1);
         // initializing solid walls/plaforms
         this.platforms = LEVELS[n].platforms.map(p => new Platform(p.x, p.y, p.w, p.h, p.dX, p.dY, p.cycle));
-        audio.playSound("tictac", "tic", 0.5, true);
+        audio.playSound("tictac", "tic", 0.3, true);
     }
 
     pauseAudio() {
