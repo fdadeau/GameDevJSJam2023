@@ -43,8 +43,8 @@ export class Level {
     }
 
     update(dt, keys) {
-        this.time -= dt;
         if (!this.player.isFrozen()) {
+            this.time -= dt;
             this.platforms.forEach(p => p.update(dt));
             this.slidingWalls.forEach(w => w.update(dt));
         }

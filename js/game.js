@@ -72,7 +72,7 @@ export class Game {
         }
         this.level.render(this.ctx);
         this.ctx.textAlign = "left";
-        this.ctx.fillText(`keys = ${JSON.stringify(this.keys)}`, 10, 40);
+        //this.ctx.fillText(`keys = ${JSON.stringify(this.keys)}`, 10, 40);
         if (this.state == GAME_OVER || this.state == TIME_OUT) {
             this.ctx.textAlign = "center";
             this.ctx.font = "bold 40px arial";
