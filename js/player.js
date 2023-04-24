@@ -310,8 +310,28 @@ export class Player {
             ctx.font = "12px arial";
             ctx.fillText(`x=${this.x.toFixed(2)},y=${this.y.toFixed(2)},onGound=${this.onGround},onPlatform=${this.onPlatform != null},complete=${this.complete}`, 10, 20);
         }
-        ctx.textAlign = "center";
-        ctx.fillText((this.timeWarp/1000).toFixed(1) + "s", WIDTH / 2, 20);
+        // display clock/watch
+        drawWatch(ctx, this.timeWarp, WIDTH - 30, 46);
     }
 
+}
+
+function drawWatch(ctx, timeWarp, x, y) {
+    ctx.textAlign = "center";
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.beginPath();
+    ctx.arc(x, y, 20, 0, 2*Math.PI);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "yellow";
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.arc(x, y, 20, -Math.PI/2, -Math.PI/2+2*Math.PI * timeWarp / MAX_TIME_WRAP);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#00A";
+    ctx.font = "12px courier";
+    ctx.fillText((timeWarp/1000).toFixed(1) + "s", x, y+5);
 }
