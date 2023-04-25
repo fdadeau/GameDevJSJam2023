@@ -5,6 +5,8 @@
 import { audio } from "./audio.js";
 import { WIDTH, HEIGHT } from "./main.js";
 
+import { data } from "./preload.js"; 
+
 /** Movement characteristics */
 const JUMP_FORCE = 0.7;
 const GRAVITY = 0.05;
@@ -13,18 +15,23 @@ const MAX_SPEED = 0.4;
 const MAX_FALL_SPEED = 0.8;
 
 /** Player dimensions */
-const PLAYER_W = 12, PLAYER_H = 36;
+const PLAYER_W = 16, PLAYER_H = 32;
 
 /** TIME WRAP OPTIONS */
 const DELTA_T = 500;
 const MAX_TIME_WRAP = 3000;
-const ANIMATION_TIME = 1000;
+const ANIMATION_TIME = 1200;
 
 // PLAYER STATES
 const NORMAL = 0, DISAPPEARING = 1, NOT_THERE = 2, APPEARING = 3;
 
 /** Draw hitbox */
-const DEBUG = false;
+const DEBUG= false;
+
+const STILL_ANIM = 1, WALK_ANIM = 4, JUMP_ANIM = 3, DISAPPEAR_ANIM = 32, APPEAR_ANIM = 31;
+const FRAME_SIZE = 64;
+const ANIM_DELAY = 140;
+const OFFSET_X = 30, OFFSET_Y = 48, PLAYER_SIZE = 64;
 
 export class Player {
 
@@ -42,8 +49,12 @@ export class Player {
         this.dead = false;
         this.complete = false;
         // 
+        this.lastDir = 1;
+        // 
         this.timeWarp = 0;
         this.animation = { type: NORMAL, remaining: 0, duration: 0 };
+        //
+        this.currentAnim = { sprite: data["walkL"], frame: 0, which: STILL_ANIM, delay: ANIM_DELAY };
     }
 
     isFrozen() {
@@ -70,6 +81,7 @@ export class Player {
                     keys.warp = 0;
                     audio.pause("tic");
                     audio.playSound("bzzt", "player", 0.7, false);
+                    this.determineAnimation(dt);
                     return;
                 }
                 break;
@@ -80,6 +92,7 @@ export class Player {
                     this.animation.type = NOT_THERE;
                     audio.resume("tic");
                 }
+                this.determineAnimation(dt);
                 return;
             case NOT_THERE:
                 this.animation.remaining -= dt;
@@ -93,6 +106,7 @@ export class Player {
                 else {
                     this.timeWarp = this.animation.remaining;
                 }
+                this.determineAnimation(dt);
                 return;
             case APPEARING:
                 this.animation.remaining -= dt;
@@ -100,6 +114,7 @@ export class Player {
                     this.animation.type = NORMAL;
                     audio.resume("tic");
                 }
+                this.determineAnimation(dt);
                 return;
         }
 
@@ -132,9 +147,11 @@ export class Player {
 
         // horizontal movement
         if (keys.right) {
+            this.lastDir = 1;
             this.speedX = this.speedX >= MAX_SPEED ? MAX_SPEED : this.speedX + ACCELERATION;
         }
         if (keys.left) {
+            this.lastDir = -1;
             this.speedX = this.speedX <= -MAX_SPEED ? -MAX_SPEED : this.speedX - ACCELERATION;
         }
         // if no key is pressed, increase or decrease to reach 0 
@@ -165,7 +182,7 @@ export class Player {
                 this.onPlatform = null;
             }
         }
-            
+
         this.updateXPosition(dt, level);
         
         this.checkAboveCollision(level);
@@ -184,9 +201,11 @@ export class Player {
             this.speedY = 0;
         }
 
-        if (this.y > level.world.height) {
+        if (this.y >= level.world.height) {
             this.dead = true;
         }
+
+        if (!this.dead) this.determineAnimation(dt);
         
     }
 
@@ -225,7 +244,7 @@ export class Player {
         let newY = this.y + this.speedY * dt;
 
         // check if out of bounds --> dead
-        if (newY > level.world.height) {
+        if (newY >= level.world.height) {
             this.y = newY;
             this.dead = true;
             return;
@@ -242,6 +261,7 @@ export class Player {
             }
             else { 
                 this.y = Math.floor((this.y - PLAYER_H) / level.size) * level.size + PLAYER_H + 1;
+                this.speedY = 0;
             }
         }    
     }
@@ -309,6 +329,79 @@ export class Player {
     }
 
 
+    determineAnimation(dt) {
+
+        if (this.animation.type == DISAPPEARING) {
+            if (this.currentAnim.which != DISAPPEAR_ANIM) {
+                this.currentAnim.sprite = (this.lastDir > 0) ? data["timeR"] : data["timeL"];
+                this.currentAnim.which = DISAPPEAR_ANIM;
+                this.currentAnim.frame = 0;
+                this.currentAnim.delay = ANIMATION_TIME / DISAPPEAR_ANIM;
+                return;
+            }
+            this.currentAnim.delay -= dt;
+            if (this.currentAnim.delay < 0) {
+                this.currentAnim.frame++;
+                this.currentAnim.delay = ANIMATION_TIME / DISAPPEAR_ANIM;
+            }
+            return;
+        }
+        if (this.animation.type == APPEARING) {
+            if (this.currentAnim.which != APPEAR_ANIM) {
+                this.currentAnim.sprite = (this.lastDir > 0) ? data["timeR"] : data["timeL"];
+                this.currentAnim.which = APPEAR_ANIM;
+                this.currentAnim.frame = 32;
+                this.currentAnim.delay = ANIMATION_TIME / DISAPPEAR_ANIM;
+                return;
+            }
+            this.currentAnim.delay -= dt;
+            if (this.currentAnim.delay < 0) {
+                this.currentAnim.frame--;
+                this.currentAnim.delay = ANIMATION_TIME / DISAPPEAR_ANIM;
+            }
+            return;
+        }
+
+        // determine animation
+        if (this.speedY != 0) {
+            if (this.currentAnim.which != JUMP_ANIM) {
+                this.currentAnim.sprite = this.lastDir > 0 ? data["jumpR"] : data["jumpL"];
+                this.currentAnim.which = JUMP_ANIM;
+                this.currentAnim.frame = 0;
+                this.currentAnim.delay = ANIM_DELAY;
+                return;
+            }
+            this.currentAnim.delay -= dt;
+            if (this.currentAnim.delay < 0) {
+                this.currentAnim.delay = ANIM_DELAY;
+                this.currentAnim.frame = (this.currentAnim.frame + 1);
+                if (this.currentAnim.frame >= this.currentAnim.which) {
+                    this.currentAnim.frame = this.currentAnim.which;
+                }
+            }
+        }       
+        else if (this.speedX != 0) {
+            if (this.currentAnim.which != WALK_ANIM) {
+                this.currentAnim.sprite = this.lastDir > 0 ? data["walkR"] : data["walkL"];
+                this.currentAnim.which = WALK_ANIM;
+                this.currentAnim.frame = 0;
+                this.currentAnim.delay = ANIM_DELAY;
+            }
+            this.currentAnim.delay -= dt;
+            if (this.currentAnim.delay <= 0) {
+                this.currentAnim.delay = ANIM_DELAY;
+                this.currentAnim.sprite = this.lastDir > 0 ? data["walkR"] : data["walkL"];
+                this.currentAnim.frame = (this.currentAnim.frame + 1) % this.currentAnim.which;
+            }
+        } 
+        else {
+            this.currentAnim.sprite = this.lastDir > 0 ? data["walkR"] : data["walkL"];
+            this.currentAnim.frame = 1;
+            this.currentAnim.which = STILL_ANIM;
+        }
+
+    }
+
 
     render(ctx, x, y) {
         ctx.fillStyle = "#FAA";
@@ -323,16 +416,19 @@ export class Player {
             scale = this.animation.remaining / ANIMATION_TIME;
         }
         if (this.animation.type != NOT_THERE) {
-            ctx.strokeRect(x - PLAYER_W * scale, y - PLAYER_H * scale - (1-scale)*PLAYER_H/2, PLAYER_W*2*scale, PLAYER_H*scale);
+            ctx.drawImage(this.currentAnim.sprite, 0, this.currentAnim.frame * FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, x - OFFSET_X, y - OFFSET_Y, PLAYER_SIZE, PLAYER_SIZE);
+           // ctx.strokeRect(x - PLAYER_W * scale, y - PLAYER_H * scale - (1-scale)*PLAYER_H/2, PLAYER_W*2*scale, PLAYER_H*scale);
         }
         // debug info (pressed keys)
         if (DEBUG) {
             ctx.textAlign = "left";
             ctx.font = "12px arial";
             ctx.fillText(`x=${this.x.toFixed(2)},y=${this.y.toFixed(2)},onPlatform=${this.onPlatform != null},complete=${this.complete}`, 10, 20);
+            
         }
         // display clock/watch
         drawWatch(ctx, this.timeWarp, WIDTH - 30, 46);
+
     }
 
 }

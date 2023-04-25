@@ -2,7 +2,12 @@
 const data = {
     
     // spritesheets
-    
+    "jumpL": "./images/jumpL.png",
+    "jumpR": "./images/jumpR.png",
+    "walkL": "./images/walkL.png",
+    "walkR": "./images/walkR.png",
+    "timeL": "./images/timeL.png",
+    "timeR": "./images/timeR.png",
     // images
     "title": "./images/title.png",
     // musics
