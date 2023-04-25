@@ -182,12 +182,11 @@ export class Player {
                 this.onPlatform = null;
             }
         }
-
-        this.updateXPosition(dt, level);
-        
         this.checkAboveCollision(level);
         if (this.dead) return;
-        
+
+        this.updateXPosition(dt, level);
+                
         this.checkWallCollisions(level);
         if (this.dead) return;
 
