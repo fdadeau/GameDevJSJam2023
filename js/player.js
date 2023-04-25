@@ -146,6 +146,7 @@ export class Player {
         // if not moving, return
         if (!keys.right && !keys.left && this.onGround && this.speedX == 0) {
             this.checkWallCollisions(level);
+            this.onPlatform = this.isOnPlatform(level);
             return;
         }
 
@@ -156,6 +157,7 @@ export class Player {
             this.y = this.onPlatform.y;
             this.checkAboveCollision(level);
             if (this.dead) return;
+            
         }
         this.updateXPosition(dt, level);
 
@@ -262,6 +264,10 @@ export class Player {
                 return p;
             }
         }
+        if (this.isOnTheGround(level)) {
+            this.onGround = true;
+
+        }
         return null;
     };
 
@@ -339,10 +345,9 @@ function drawWatch(ctx, timeWarp, x, y) {
     ctx.fillStyle = "yellow";
     ctx.beginPath();
     ctx.moveTo(x, y);
-    ctx.arc(x, y, 20, -Math.PI/2, -Math.PI/2+2*Math.PI * timeWarp / MAX_TIME_WRAP);
+    ctx.arc(x, y, 19, -Math.PI/2, -Math.PI/2+2*Math.PI * timeWarp / MAX_TIME_WRAP);
     ctx.closePath();
     ctx.fill();
-    ctx.stroke();
     ctx.fillStyle = "#00A";
     ctx.font = "12px courier";
     ctx.fillText((timeWarp/1000).toFixed(1) + "s", x, y+5);
