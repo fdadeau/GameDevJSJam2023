@@ -10,7 +10,7 @@ import { audio } from "./audio.js";
 
 const LOADING = 0, MENU = 5, IN_GAME = 10, GAME_OVER = 20, COMPLETED = 30, TIME_OUT = 40; 
 
-const START_LEVEL = 3;
+const START_LEVEL = 5;
 
 export class Game {
 
