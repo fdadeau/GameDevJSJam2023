@@ -41,8 +41,14 @@ class CyclicEntity {
         this.y = this.initY + percentage * this.dY;
     }
 
-    intersects(x, y, w) {
-        return x + w >= this.x && x - w <= this.x + this.width && y >= this.y && y <= this.y + 2*this.height;
+    intersects(x, y, lastX, lastY, w) {
+        if (x + w >= this.x && x - w <= this.x + this.width && y >= this.y && y <= this.y + this.height) {
+            return true;
+        }
+        if (lastX + w >= this.x && lastX - w <= this.x + this.width && lastY <= this.y && x + w >= this.x && x - w <= this.x + this.width && y > this.y + this.height) {
+                return true;
+        } 
+        return false;
     }
 
     render(ctx, srcX, srcY) {

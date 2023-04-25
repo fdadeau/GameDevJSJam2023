@@ -10,7 +10,7 @@ const JUMP_FORCE = 0.7;
 const GRAVITY = 0.05;
 const ACCELERATION = 0.02;
 const MAX_SPEED = 0.4;
-const MAX_FALL_SPEED = 3;
+const MAX_FALL_SPEED = 0.8;
 
 /** Player dimensions */
 const PLAYER_W = 12, PLAYER_H = 36;
@@ -30,8 +30,8 @@ export class Player {
 
     constructor(x, y) {
         // position
-        this.x = x;
-        this.y = y;
+        this.x = this.lastX = x;
+        this.y = this.lastY = y;
         // movement 
         this.speedX = 0;
         this.speedY = GRAVITY;
@@ -53,11 +53,19 @@ export class Player {
 
     update(dt, keys, level) {
 
+        this.lastX = this.x;
+        this.lastY = this.y;
+
+        if (this.dead) {
+            return;
+        }
+
         switch (this.animation.type) {
             case NORMAL:
                 if (keys.warp == 1 && this.timeWarp > 0) {
                     this.animation.type = DISAPPEARING;
                     this.animation.remaining = ANIMATION_TIME;
+                    this.onPlatform = null;
                     keys.warp = 0;
                     audio.pause("tic");
                     audio.playSound("bzzt", "player", 0.7, false);
@@ -147,10 +155,12 @@ export class Player {
         if (this.onPlatform != null) {
             this.y = this.onPlatform.y;
             this.checkAboveCollision(level);
+            if (this.dead) return;
         }
         this.updateXPosition(dt, level);
 
         this.checkWallCollisions(level);
+        if (this.dead) return;
 
         this.onGround = this.isOnTheGround(level);
         this.onPlatform = this.isOnPlatform(level);
@@ -216,6 +226,7 @@ export class Player {
         else {
             if (this.speedY > 0) {  // falling
                 this.onGround = true;
+                this.onPlatform = null;
                 switch (intersectingTile) {
                     case 1: 
                         this.y = Math.floor(this.y / level.size + 1) * level.size - 1;
@@ -247,10 +258,11 @@ export class Player {
     isOnPlatform(level) {
         for (let i=0; i < level.platforms.length; i++) {
             let p = level.platforms[i];
-            if (this.speedY >= 0 && p.intersects(this.x, this.y+2, PLAYER_W)) {
+            if (this.speedY >= 0 && p.intersects(this.x, this.y+1, this.lastX, this.lastY, PLAYER_W)) {
                 return p;
             }
         }
+        return null;
     };
 
     checkAboveCollision(level) {
