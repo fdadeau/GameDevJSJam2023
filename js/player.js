@@ -415,7 +415,7 @@ export class Player {
             scale = this.animation.remaining / ANIMATION_TIME;
         }
         if (this.animation.type != NOT_THERE) {
-            ctx.drawImage(this.currentAnim.sprite, 0, this.currentAnim.frame * FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, x - OFFSET_X, y - OFFSET_Y, PLAYER_SIZE, PLAYER_SIZE);
+            ctx.drawImage(this.currentAnim.sprite, 0, this.currentAnim.frame * FRAME_SIZE, FRAME_SIZE-1, FRAME_SIZE-1, x - OFFSET_X, y - OFFSET_Y, PLAYER_SIZE, PLAYER_SIZE);
            // ctx.strokeRect(x - PLAYER_W * scale, y - PLAYER_H * scale - (1-scale)*PLAYER_H/2, PLAYER_W*2*scale, PLAYER_H*scale);
         }
         // debug info (pressed keys)

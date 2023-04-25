@@ -101,6 +101,11 @@ export class BlinkingPlatform extends Platform {
         this.height = (this.timer > this.cycle / 2) ? 0 : this.initH;
     }
 
+    intersects(x, y, lastX, lastY, w) {
+        if (this.width == 0) return false;
+        return super.intersects(x, y, lastX, lastY, w);
+    }
+
     render(ctx, srcX, srcY) {
         ctx.fillStyle = this.timer > this.cycle * 0.4 ? PLATFORM_COLOR_BIS : PLATFORM_COLOR
         ctx.fillRect(this.x - srcX, this.y - srcY, this.width, this.height);
