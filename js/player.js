@@ -24,7 +24,7 @@ const ANIMATION_TIME = 1000;
 const NORMAL = 0, DISAPPEARING = 1, NOT_THERE = 2, APPEARING = 3;
 
 /** Draw hitbox */
-const DEBUG = false;
+const DEBUG = true;
 
 export class Player {
 
@@ -35,7 +35,7 @@ export class Player {
         // movement 
         this.speedX = 0;
         this.speedY = GRAVITY;
-        this.onGround = false;
+        this.onGround = 0;
         this.onPlatform = null;     
         // active
         this.active = true;
@@ -56,6 +56,7 @@ export class Player {
         this.lastX = this.x;
         this.lastY = this.y;
 
+        // if player is dead --> no more moves are possible.
         if (this.dead) {
             return;
         }
@@ -103,19 +104,21 @@ export class Player {
         }
 
         if (keys.jump) {
-            if (this.onGround || this.onPlatform) {
+            if (this.isOnTheGround(level) || this.onPlatform) {
                 this.speedY = -JUMP_FORCE;
-                this.onGround = false;
                 this.onPlatform = null;
             }
             keys.jump = 0;
         }
 
         // key up on exit door
-        if (keys.up && this.onGround && level.isOnExit(this.x, this.y, PLAYER_W)) {
+        if (keys.up && this.isOnTheGround(level) && level.isOnExit(this.x, this.y, PLAYER_W)) {
             this.complete = true;
             keys.up = 0;
+            return;
         }
+
+        // time adjustment (between 0 and max MAX_TIME_WRAP)
         if (keys.adjust != 0) {
             this.timeWarp += keys.adjust * DELTA_T;
             if (this.timeWarp < 0) {
@@ -127,13 +130,14 @@ export class Player {
             keys.adjust = 0;
         }
 
-
+        // horizontal movement
         if (keys.right) {
             this.speedX = this.speedX >= MAX_SPEED ? MAX_SPEED : this.speedX + ACCELERATION;
         }
         if (keys.left) {
             this.speedX = this.speedX <= -MAX_SPEED ? -MAX_SPEED : this.speedX - ACCELERATION;
         }
+        // if no key is pressed, increase or decrease to reach 0 
         if (!keys.left && !keys.right) {
             if (this.speedX > 0) {
                 this.speedX = this.speedX - ACCELERATION <= 0 ? 0 : this.speedX - ACCELERATION;
@@ -143,29 +147,40 @@ export class Player {
             }
         }
 
-        // if not moving, return
-        if (!keys.right && !keys.left && this.onGround && this.speedX == 0) {
-            this.checkWallCollisions(level);
-            return;
-        }
-
-        if (!this.onGround && !this.onPlatform) {
+        // if flying
+        if (this.speedY != 0) {
             this.updateYPosition(dt, level);
+            if (this.dead) return;  // out of bounds --> dead
         }
+        // moving on a platform
         if (this.onPlatform != null) {
             this.y = this.onPlatform.y;
-            this.checkAboveCollision(level);
-            if (this.dead) return;
+            // check if platform has reached the ground. if so, set Y coordinate to ground level.
+            let t = this.isOnTheGround(level); 
+            if (t > 0) {
+                this.y = t - 1;
+                this.onPlatform = null;
+            }
         }
+        this.checkAboveCollision(level);
+        if (this.dead) return;
+            
         this.updateXPosition(dt, level);
 
         this.checkWallCollisions(level);
         if (this.dead) return;
 
-        this.onGround = this.isOnTheGround(level);
         this.onPlatform = this.isOnPlatform(level);
 
-        if (this.y >= level.world.height-1) {
+        if (!this.onPlatform && this.isOnTheGround(level) == 0) {
+            this.speedY += GRAVITY;
+            if (this.speedY > MAX_FALL_SPEED) { this.speedY = MAX_FALL_SPEED; }
+        }
+        else {
+            this.speedY = 0;
+        }
+
+        if (this.y > level.world.height) {
             this.dead = true;
         }
         
@@ -187,25 +202,13 @@ export class Player {
         }
         else {
             // horizontal movement is not possible, get position next to wall depending on the direction
-            switch (intersectingTile) {
-                case 1: 
-                    if (this.speedX > 0) {
-                        this.x = Math.floor(this.x / level.size + 1) * level.size - PLAYER_W - 1;
-                    }
-                    else {
-                        this.x = Math.floor(this.x / level.size ) * level.size + PLAYER_W;
-                    }
-                    this.speedX = 0;
-                    break;
-                case 4: 
-                    this.x = newX;
-                    this.y = level.getPointAbove(this.x, this.y); 
-                    break;
-                case 5: 
-                    this.x = newX;
-                    this.y = level.getPointAbove(this.x, this.y);
-                    break;
+            if (this.speedX > 0) {
+                this.x = Math.floor(this.x / level.size + 1) * level.size - PLAYER_W - 1;
             }
+            else {
+                this.x = Math.floor(this.x / level.size ) * level.size + PLAYER_W;
+            }
+            this.speedX = 0;
         }
     }
     /**
@@ -216,33 +219,24 @@ export class Player {
     updateYPosition(dt, level) {
         // check vertical collision
         let newY = this.y + this.speedY * dt;
+
+        // check if out of bounds --> dead
+        if (newY > level.world.height) {
+            this.dead = true;
+            return;
+        }
+
+        // check intersection with a tile
         let intersectingTile = level.intersectsWith(this.x, newY, PLAYER_W, PLAYER_H);
         if (intersectingTile == 0) {
             this.y = newY;
-            this.speedY += GRAVITY;
-            if (this.speedY > MAX_FALL_SPEED) { this.speedY = MAX_FALL_SPEED; }
-            this.onGround = false;
         }
         else {
             if (this.speedY > 0) {  // falling
-                this.onGround = true;
-                this.onPlatform = null;
-                switch (intersectingTile) {
-                    case 1: 
-                        this.y = Math.floor(this.y / level.size + 1) * level.size - 1;
-                        break;
-                    case 4: 
-                        this.y = level.getPointAbove(this.x, newY);
-                        break;
-                    case 5: 
-                        this.y = level.getPointAbove(this.x, newY);
-                        break;           
-                }
+                this.y = Math.floor(this.y / level.size + 1) * level.size - 1;
             }
             else { 
                 this.y = Math.floor((this.y - PLAYER_H) / level.size) * level.size + PLAYER_H + 1;
-                this.onGround = false;                
-                this.speedY = GRAVITY;
             }
         }    
     }
@@ -252,7 +246,10 @@ export class Player {
      * @returns true if it's the case.
      */
     isOnTheGround(level) {
-        return (level.whichTile(this.x - PLAYER_W, this.y + 1) != 0 || level.whichTile(this.x + PLAYER_W, this.y + 1) != 0);
+        if (level.whichTile(this.x - PLAYER_W, this.y + 1) != 0 || level.whichTile(this.x + PLAYER_W, this.y + 1) != 0) {
+            return Math.floor((this.y + 1) / level.size) * level.size;
+        }
+        return 0;
     }
 
     isOnPlatform(level) {
@@ -267,8 +264,6 @@ export class Player {
 
     checkAboveCollision(level) {
         if (level.whichTile(this.x-PLAYER_W, this.y-PLAYER_H) != 0 || level.whichTile(this.x+PLAYER_W,this.y-PLAYER_H) != 0) {
-            this.y += this.onPlatform.height + 15;
-            this.onPlatform = null;            
             this.dead = true;
         }
     }
@@ -286,7 +281,9 @@ export class Player {
     checkWallCollisions(level) {
         let wL = this.collidesWalls(level,-1);
         let wR = this.collidesWalls(level,1); 
-        if (wL && wR) {
+        let tileOnLeft = level.whichTile(this.x - PLAYER_W, this.y) || level.whichTile(this.x - PLAYER_W, this.y-PLAYER_H) != 0;
+        let tileOnRight = level.whichTile(this.x + PLAYER_W, this.y) || level.whichTile(this.x + PLAYER_W, this.y-PLAYER_H);
+        if (wL && wR || wL && tileOnRight || wR && tileOnLeft) {
             this.dead = true;
         }
         else if (wL) {
@@ -314,13 +311,13 @@ export class Player {
             scale = this.animation.remaining / ANIMATION_TIME;
         }
         if (this.animation.type != NOT_THERE) {
-            ctx.strokeRect(x - PLAYER_W * scale | 0, y - PLAYER_H * scale - (1-scale)*PLAYER_H/2 | 0, PLAYER_W*2*scale, PLAYER_H*scale);
+            ctx.strokeRect(x - PLAYER_W * scale, y - PLAYER_H * scale - (1-scale)*PLAYER_H/2, PLAYER_W*2*scale, PLAYER_H*scale);
         }
         // debug info (pressed keys)
         if (DEBUG) {
             ctx.textAlign = "left";
             ctx.font = "12px arial";
-            ctx.fillText(`x=${this.x.toFixed(2)},y=${this.y.toFixed(2)},onGound=${this.onGround},onPlatform=${this.onPlatform != null},complete=${this.complete}`, 10, 20);
+            ctx.fillText(`x=${this.x.toFixed(2)},y=${this.y.toFixed(2)},onPlatform=${this.onPlatform != null},complete=${this.complete}`, 10, 20);
         }
         // display clock/watch
         drawWatch(ctx, this.timeWarp, WIDTH - 30, 46);

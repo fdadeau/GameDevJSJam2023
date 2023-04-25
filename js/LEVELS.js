@@ -26,10 +26,10 @@ export const LEVELS = {
             {type: "Platform", x: 20*40, y: 2*40, w: 80, h: 10, dX: 0, dY: 180, cycle: 3000 }, 
             {type: "Platform", x: 20*40, y: 6*40, w: 80, h: 10, dX: 0, dY: 180, cycle: 3000 }, 
             // sliding walls
-            {type: "SlidingWall", x: 10*40, y: 12*40, w: 10, h: 120, dX: -300, dY: 0, cycle: 3000 }, 
+            {type: "SlidingWall", x: 11.5*40, y: 12*40, w: 10, h: 120, dX: -400, dY: 0, cycle: 3000 }, 
             // blinking platforms
-            {type: "BlinkingPlatform", x: 3*40, y: 10*40, w: 120, h: 10, dX: 0, dY: 0, cycle: 3000, delay: 0 }, 
-            {type: "BlinkingPlatform", x: 2*40, y: 12.5*40, w: 120, h: 10, dX: 0, dY: 0, cycle: 3000, delay: 1500 }, 
+            {type: "BlinkingPlatform", x: 3*40, y: 11*40, w: 120, h: 10, dX: 0, dY: 0, cycle: 3000, delay: 0 }, 
+            {type: "BlinkingPlatform", x: 2*40, y: 13*40, w: 120, h: 10, dX: 0, dY: 0, cycle: 3000, delay: 1500 }, 
             {type: "BlinkingPlatform", x: 4.5*40, y: 2.5*40, w: 120, h: 10, dX: 0, dY: 0, cycle: 2000, delay: 0 }, 
             {type: "BlinkingPlatform", x: 8*40, y: 2.5*40, w: 120, h: 10, dX: 0, dY: 0, cycle: 2000, delay: 0 }, 
             {type: "BlinkingPlatform", x: 11.5*40, y: 2.5*40, w: 120, h: 10, dX: 0, dY: 0, cycle: 2000, delay: 0 }, 
@@ -196,7 +196,7 @@ function MAP_DIFF() {
     [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
-    [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0]
     ];
 }
