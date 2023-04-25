@@ -130,15 +130,28 @@ function makeBackground(level) {
     const osc = new OffscreenCanvas(W, H);
     const ctx = osc.getContext("2d");
     // sky
-    ctx.fillStyle = "lightblue";
-    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "#000011";
+    ///ctx.fillRect(0, 0, W, H);
     // elements in the map
-    ctx.fillStyle = "darkorange";
+    ctx.fillStyle = "lightgrey";
+
+    if (level.texts) {
+        ctx.fillStyle = "lightblue";
+        ctx.font = "20px arial";
+        ctx.textAlign = "center";
+        level.texts.forEach(t => {
+            ctx.fillText(t.text, t.x, t.y);
+        });
+    }
+
     for (let l=0; l < level.map.length; l++) {
         for (let c=0; c < level.map[l].length; c++) {
             switch (level.map[l][c]) {
                 case 1: 
+                    ctx.fillStyle = "grey";
                     ctx.fillRect(c*level.size, l*level.size, level.size, level.size);
+                    ctx.fillStyle = "lightgrey";
+                    ctx.fillRect(c*level.size + 2, l*level.size + 2, level.size - 4, level.size - 4);
                     break;
                 case 2: 
                     ctx.moveTo(c*level.size, l*level.size);
@@ -179,7 +192,7 @@ function makeBackground(level) {
     ctx.fillRect((level.exit.c) * level.size, (level.exit.l - 0.5) * level.size, level.size, level.size*1.5);
     ctx.font = "16px arial";
     ctx.textAlign = "center";
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.fillText("EXIT", (level.exit.c+0.5) * level.size, (level.exit.l-0.7) * level.size);
 
     return osc;

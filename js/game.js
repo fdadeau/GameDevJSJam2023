@@ -10,7 +10,7 @@ import { audio } from "./audio.js";
 
 const LOADING = 0, MENU = 5, IN_GAME = 10, GAME_OVER = 20, COMPLETED = 30, TIME_OUT = 40; 
 
-const START_LEVEL = 3;
+const START_LEVEL = 2;
 
 export class Game {
 
@@ -77,7 +77,9 @@ export class Game {
             this.ctx.textAlign = "center";
             this.ctx.font = "bold 40px arial";
             this.ctx.fillStyle = "#A00";
+            this.ctx.strokeStyle = "white";
             this.ctx.fillText(this.state == GAME_OVER ? "GAME OVER" : "TIME OUT", WIDTH / 2, HEIGHT * 0.4);
+            this.ctx.strokeText(this.state == GAME_OVER ? "GAME OVER" : "TIME OUT", WIDTH / 2, HEIGHT * 0.4);
             this.ctx.font = "20px arial";
             this.ctx.fillText("Press R to restart level", WIDTH / 2, HEIGHT * 0.6);
         }
@@ -85,11 +87,13 @@ export class Game {
             this.ctx.textAlign = "center";
             this.ctx.font = "bold 40px arial";
             this.ctx.fillStyle = "#A00";
-            this.ctx.fillText("LEVEL COMPLETE", WIDTH / 2, HEIGHT * 0.4);
+            this.ctx.strokeStyle = "white";
+            this.ctx.fillText("LEVEL COMPLETED", WIDTH / 2, HEIGHT * 0.4);
+            this.ctx.strokeText("LEVEL COMPLETED", WIDTH / 2, HEIGHT * 0.4);
             this.ctx.font = "20px arial";
             this.ctx.fillText("Press Spacebar to load next level", WIDTH / 2, HEIGHT * 0.6);
         }
-        this.ctx.fillStyle = "black";
+        this.ctx.fillStyle = "white";
         this.ctx.textAlign = "right";
         this.ctx.font = "16px courier";
         this.ctx.fillText("Time:", WIDTH - 40, 20);

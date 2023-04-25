@@ -1,4 +1,10 @@
 
+const WALL_COLOR = "#66F";
+
+const PLATFORM_COLOR = "#66F";
+const PLATFORM_COLOR_BIS = "#AAF";
+
+
 /**
  * Cyclic entities: obstacles/platforms/etc. that have a cyclic behavior
  */
@@ -15,7 +21,7 @@ class CyclicEntity {
      * @param {Number} cycleT time for a full cycle (in ms)
      */
     constructor(x,y,w,h,dX,dY,cycleT) {
-        this.x = this.initX = x;
+        this.x = this.initX = this.lastX = x;
         this.y = this.initY = y;
         this.width = this.initW = w;
         this.height = this.initH = h;
@@ -26,6 +32,7 @@ class CyclicEntity {
     }
 
     update(dt) {
+        this.lastX = this.x;
         this.timer += dt;
         if (this.timer < 0) {
             this.timer += this.cycle;
@@ -42,7 +49,7 @@ class CyclicEntity {
     }
 
     intersects(x, y, lastX, lastY, w) {
-        if (x + w >= this.x && x - w <= this.x + this.width && y >= this.y && y <= this.y + this.height) {
+        if (x + w >= this.x && x - w <= this.x + this.width && y > this.y && y <= this.y + this.height) {
             return true;
         }
         if (lastX + w >= this.x && lastX - w <= this.x + this.width && lastY <= this.y && x + w >= this.x && x - w <= this.x + this.width && y > this.y + this.height) {
@@ -64,7 +71,7 @@ export class Platform extends CyclicEntity {
     }
 
     render(ctx, srcX, srcY) {
-        ctx.fillStyle = "#005";
+        ctx.fillStyle = PLATFORM_COLOR;
         ctx.fillRect(this.x - srcX, this.y - srcY, this.width, this.height);
     }
 }
@@ -76,7 +83,7 @@ export class SlidingWall extends CyclicEntity {
     }
 
     render(ctx, srcX, srcY) {
-        ctx.fillStyle = "#709";
+        ctx.fillStyle = WALL_COLOR;
         ctx.fillRect(this.x - srcX, this.y - srcY, this.width, this.height);
     }
 }
@@ -95,7 +102,7 @@ export class BlinkingPlatform extends Platform {
     }
 
     render(ctx, srcX, srcY) {
-        ctx.fillStyle = this.timer > this.cycle * 0.4 ? "#F00" : "#005";
+        ctx.fillStyle = this.timer > this.cycle * 0.4 ? PLATFORM_COLOR_BIS : PLATFORM_COLOR
         ctx.fillRect(this.x - srcX, this.y - srcY, this.width, this.height);
     }
 

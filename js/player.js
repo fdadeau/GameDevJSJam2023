@@ -24,7 +24,7 @@ const ANIMATION_TIME = 1000;
 const NORMAL = 0, DISAPPEARING = 1, NOT_THERE = 2, APPEARING = 3;
 
 /** Draw hitbox */
-const DEBUG = true;
+const DEBUG = false;
 
 export class Player {
 
@@ -155,6 +155,9 @@ export class Player {
         // moving on a platform
         if (this.onPlatform != null) {
             this.y = this.onPlatform.y;
+            if (this.onPlatform.dX) {
+                this.x += this.onPlatform.x - this.onPlatform.lastX;
+            }
             // check if platform has reached the ground. if so, set Y coordinate to ground level.
             let t = this.isOnTheGround(level); 
             if (t > 0) {
@@ -162,11 +165,12 @@ export class Player {
                 this.onPlatform = null;
             }
         }
-        this.checkAboveCollision(level);
-        if (this.dead) return;
             
         this.updateXPosition(dt, level);
-
+        
+        this.checkAboveCollision(level);
+        if (this.dead) return;
+        
         this.checkWallCollisions(level);
         if (this.dead) return;
 
@@ -222,6 +226,7 @@ export class Player {
 
         // check if out of bounds --> dead
         if (newY > level.world.height) {
+            this.y = newY;
             this.dead = true;
             return;
         }
@@ -255,7 +260,7 @@ export class Player {
     isOnPlatform(level) {
         for (let i=0; i < level.platforms.length; i++) {
             let p = level.platforms[i];
-            if (this.speedY >= 0 && p.intersects(this.x, this.y+1, this.lastX, this.lastY, PLAYER_W)) {
+            if (this.speedY >= 0 && p.intersects(this.x, this.y+1, this.lastX, this.lastY, PLAYER_W) && !this.collidesAbove(level)) {
                 return p;
             }
         }
@@ -267,9 +272,12 @@ export class Player {
     };
 
     checkAboveCollision(level) {
-        if (level.whichTile(this.x-PLAYER_W, this.y-PLAYER_H) != 0 || level.whichTile(this.x+PLAYER_W,this.y-PLAYER_H) != 0) {
+        if (this.collidesAbove(level)) {
             this.dead = true;
         }
+    }
+    collidesAbove(level) {
+        return (level.whichTile(this.x-PLAYER_W, this.y-PLAYER_H) != 0 || level.whichTile(this.x+PLAYER_W,this.y-PLAYER_H) != 0)
     }
 
     collidesWalls(level, dir) {
@@ -303,10 +311,10 @@ export class Player {
 
 
     render(ctx, x, y) {
-        ctx.fillStyle = "#000";
+        ctx.fillStyle = "#FAA";
 
         // drawing of the character
-        ctx.strokeStyle = "#000";
+        ctx.strokeStyle = "#FAA";
         let scale = 1;
         if (this.animation.type == APPEARING) {
             scale = 1 - this.animation.remaining / ANIMATION_TIME;
