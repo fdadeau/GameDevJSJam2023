@@ -82,6 +82,17 @@ export class SlidingWall extends CyclicEntity {
         super(x,y,w,h,dX,dY,cycleT);
     }
 
+    intersects(x, y, lastX, lastY, w) {
+        if (x + w >= this.x && x - w <= this.x + this.width && y > this.y && y <= this.y + this.height) {
+            return true;
+        }
+        if (y >= this.y && y <= this.y + this.height && (lastX + w < this.x && x - w > this.x || lastX - w > this.x && x + w < this.x)) {
+                return true;
+        } 
+        return false;
+    }
+
+
     render(ctx, srcX, srcY) {
         ctx.fillStyle = WALL_COLOR;
         ctx.fillRect(this.x - srcX, this.y - srcY, this.width, this.height);

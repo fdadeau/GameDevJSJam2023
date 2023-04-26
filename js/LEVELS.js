@@ -1,6 +1,7 @@
 export const LEVELS = {
     1 : { 
         map: MAP_TUTO1(),
+        desc: "Tutorial (1/4)",
         size: 40,
         time: 200,
         player: {l: 12, c: 2},
@@ -17,6 +18,7 @@ export const LEVELS = {
     },
     2 : { 
         map: MAP_TUTO2(),
+        desc: "Tutorial (2/4)",
         size: 40,
         time: 20,
         player: {l: 1, c: 2},
@@ -36,6 +38,7 @@ export const LEVELS = {
     },
     3 : { 
         map: MAP_TUTO3(),
+        desc: "Tutorial (3/4)",
         size: 40,
         time: 200,
         player: {l: 12, c: 2},
@@ -57,6 +60,7 @@ export const LEVELS = {
     },
     4 : { 
         map: MAP1(),
+        desc: "Easy",
         size: 40,
         player: {l: 16, c: 0},
         time: 20,
@@ -69,6 +73,7 @@ export const LEVELS = {
     },
     5 : { 
         map: MAP_DIFF(),
+        desc: "Normal",
         size: 45,
         time: 400,
         player: {l: 12, c: 2},
@@ -107,6 +112,7 @@ export const LEVELS = {
         },
         6 : { 
             map: MAP_TUTO6(),//transversale
+            desc: "Normal",
             size: 40,
             time: 200,
             player: {l: 14, c: 2},
@@ -122,6 +128,7 @@ export const LEVELS = {
         },
         7 : { 
             map: MAP_TUTO7(),//transversale
+            desc: "Normal",
             size: 40,
             time: 200,
             player: {l: 14, c: 2},
@@ -154,6 +161,7 @@ export const LEVELS = {
         },
         8 : { 
             map: MAP_TUTO8(),
+            desc: "Hard",
             size: 40,
             time: 200,
             player: {l: 8, c: 2},
@@ -164,6 +172,7 @@ export const LEVELS = {
         },
         9 : { 
             map: MAP_MOY(),
+            desc: "Normal",
             size: 40,
             time: 200,
             player: {l: 15, c: 2},
@@ -182,6 +191,7 @@ export const LEVELS = {
         },
         10 : { 
             map: MAP_10(),
+            desc: "Nightmare",
             size: 40,
             time: 200,
             player: {l: 15, c: 2},

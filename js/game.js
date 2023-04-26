@@ -8,9 +8,9 @@ import { LEVELS } from "./LEVELS.js";
 
 import { audio } from "./audio.js";
 
-const LOADING = 0, MENU = 5, IN_GAME = 10, GAME_OVER = 20, COMPLETED = 30, TIME_OUT = 40; 
+const LOADING = 0, MENU = 5, LEVEL_SELECTION = 8, IN_GAME = 10, PAUSE = 15, GAME_OVER = 20, COMPLETED = 30, TIME_OUT = 40; 
 
-const START_LEVEL = 3;
+const START_LEVEL = 6;
 
 export class Game {
 
@@ -70,10 +70,36 @@ export class Game {
             this.ctx.fillText(this.msg, WIDTH / 2, HEIGHT * 0.7);
             return;
         }
+        if (this.state == LEVEL_SELECTION) {
+            this.ctx.font = "bold 40px arial";
+            this.ctx.fillStyle = "#A00";
+            this.ctx.fillText("LEVEL SELECTION", WIDTH / 2, HEIGHT * 0.2);
+            this.ctx.font = "16px arial";
+
+            let k=0;
+            for (let i in LEVELS) {
+                mkButton(this.ctx, i, LEVELS[i].desc, 150 + (k % 5) * 120, 200 + (k >= 5 ? 100 : 0), this.nLevel == Number(i));
+                k++;
+            }
+            this.ctx.fillText("Use arrows to browse levels, and space to validate.", WIDTH / 2, HEIGHT * 0.85);
+            this.ctx.fillText("Use Escape to return to title.", WIDTH / 2, HEIGHT * 0.9);
+            return;
+        }
         this.level.render(this.ctx);
         this.ctx.textAlign = "left";
         //this.ctx.fillText(`keys = ${JSON.stringify(this.keys)}`, 10, 40);
-        if (this.state == GAME_OVER || this.state == TIME_OUT) {
+        if (this.state == PAUSE) {
+            this.ctx.fillStyle = "white";
+            this.ctx.fillRect(WIDTH / 2 - 160, HEIGHT / 2 - 100, 320, 200);
+            this.ctx.fillStyle = "black";
+            this.ctx.fillRect(WIDTH / 2 - 150, HEIGHT / 2 - 90, 300, 180);
+            this.ctx.fillStyle = "white";
+            this.ctx.textAlign = "center";
+            this.ctx.fillText("GAME PAUSED", WIDTH/2, HEIGHT/2 - 60);
+            this.ctx.fillText("Press Escape again to exit", WIDTH/2, HEIGHT/2);
+            this.ctx.fillText("Press Spacebar to resume", WIDTH/2, HEIGHT/2 + 50);
+        }
+        else if (this.state == GAME_OVER || this.state == TIME_OUT) {
             this.ctx.textAlign = "center";
             this.ctx.font = "bold 40px arial";
             this.ctx.fillStyle = "#A00";
@@ -81,7 +107,7 @@ export class Game {
             this.ctx.fillText(this.state == GAME_OVER ? "GAME OVER" : "TIME OUT", WIDTH / 2, HEIGHT * 0.4);
             this.ctx.strokeText(this.state == GAME_OVER ? "GAME OVER" : "TIME OUT", WIDTH / 2, HEIGHT * 0.4);
             this.ctx.font = "20px arial";
-            this.ctx.fillText("Press R to restart level", WIDTH / 2, HEIGHT * 0.6);
+            this.ctx.fillText("Press Spacebar to restart level", WIDTH / 2, HEIGHT * 0.6);
         }
         else if (this.state == COMPLETED) {
             this.ctx.textAlign = "center";
@@ -125,10 +151,12 @@ export class Game {
                 case "KeyS":
                     this.keys.warp = 1;
                     break;
+                case "Escape":
+                    this.state = PAUSE;
             }
             return;
         }
-        else if ((this.state == GAME_OVER || this.state == TIME_OUT) && code == "KeyR") {
+        else if ((this.state == GAME_OVER || this.state == TIME_OUT) && code == "Space") {
             this.reset();
         }
         else if (this.state == COMPLETED && code == "Space") {
@@ -138,7 +166,48 @@ export class Game {
             }
         }
         else if (this.state == MENU && code == "Space") {
-            this.reset();
+            this.state = LEVEL_SELECTION;
+            this.nLevel = 1;
+        }
+        else if (this.state == PAUSE) {
+            if (code == "Space") {
+                this.state = IN_GAME;
+            }
+            else if (code == "Escape") {
+                this.state = LEVEL_SELECTION;
+            }
+        }
+        else if (this.state == LEVEL_SELECTION) {
+            switch (code) {
+                case "ArrowUp":
+                    if (this.nLevel > 5) {
+                        this.nLevel = this.nLevel - 5;
+                    }
+                    break;
+                case "ArrowDown":
+                    if (this.nLevel < 6) {
+                        this.nLevel = this.nLevel + 5
+                    }
+                    break;
+                case "ArrowLeft":
+                    if (this.nLevel != 1 && this.nLevel != 6) {
+                        this.nLevel = this.nLevel - 1;
+                    }
+                    break;
+                case "ArrowRight":
+                    if (this.nLevel != 5 && this.nLevel != 10) {
+                        this.nLevel = this.nLevel + 1;
+                    }
+                    break;
+                case "Space":
+                    if (this.nLevel > 0 && this.nLevel <= Object.keys(LEVELS).length) {
+                        this.reset();
+                    }
+                    break;
+                case "Escape":
+                    this.state = MENU;
+                    break;
+            }
         }
     }
     releaseKey(code) {
@@ -174,4 +243,17 @@ export class Game {
             return;
         }
     }
+}
+
+function mkButton(ctx, txt, txt2, x, y, selected) {
+    ctx.font = "arial 30px";
+    ctx.textAlign = "center";
+        
+    if (selected) {
+        ctx.fillStyle = "#600";
+        ctx.fillRect(x - 20, y - 28, 40, 40);
+    }
+    ctx.fillStyle = "white";
+    ctx.fillText(txt, x, y);
+    ctx.fillText(txt2, x, y+40);
 }
