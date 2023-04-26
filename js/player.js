@@ -193,7 +193,7 @@ export class Player {
         this.onPlatform = this.isOnPlatform(level);
 
         if (!this.onPlatform && this.isOnTheGround(level) == 0) {
-            this.speedY += GRAVITY;
+            this.speedY += GRAVITY * dt / (1000/60);
             if (this.speedY > MAX_FALL_SPEED) { this.speedY = MAX_FALL_SPEED; }
         }
         else {
