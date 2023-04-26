@@ -15,6 +15,8 @@ const START_LEVEL = 6;
 const DELAY = 60;
 let frame = -10, df = 1, delay = DELAY, max = 50;
 
+let fps = 0, time = 1000, lastFPS = 0;
+
 export class Game {
 
     constructor(cvs) {
@@ -41,6 +43,13 @@ export class Game {
     }
 
     update(dt) {
+        time -= dt;
+        if (time < 0) {
+            lastFPS = fps;
+            fps = 0;
+            time = 1000;
+        }
+        else fps++
         if (this.state == MENU) {
             delay -= dt;
             if (delay < 0) {
@@ -148,6 +157,7 @@ export class Game {
         this.ctx.fillText("Time:", WIDTH - 40, 20);
         let t = String(this.level.time / 1000 | 0);
         this.ctx.fillText(t, WIDTH - 10, 20);
+        this.ctx.fillText(lastFPS, 20, 20)
     }
 
     pressKey(code) {
