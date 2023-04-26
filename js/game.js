@@ -172,6 +172,7 @@ export class Game {
                     this.keys.warp = 1;
                     break;
                 case "Escape":
+                    audio.pause("tic");
                     this.state = PAUSE;
             }
             return;
@@ -191,6 +192,7 @@ export class Game {
         }
         else if (this.state == PAUSE) {
             if (code == "Space") {
+                audio.resume("tic");
                 this.state = IN_GAME;
             }
             else if (code == "Escape") {
