@@ -65,9 +65,9 @@ export const LEVELS = {
             { x: 380, y: 50, text: "Now, let's see what you have learnt..." }  
         ] 
     },
-    4 : { 
+    6 : { 
         map: MAP1(),
-        desc: "Easy",
+        desc: "Normal",
         size: 40,
         player: {l: 16, c: 0},
         time: 30,
@@ -85,7 +85,7 @@ export const LEVELS = {
         map: MAP_DIFF(),
         desc: "Nightmare",
         size: 45,
-        time: 400,
+        time: 100,
         player: {l: 12, c: 2},
         obstacles: [ 
         
@@ -120,7 +120,7 @@ export const LEVELS = {
         ],
         exit: { l: 2, c: 22 } 
         },
-        6 : { 
+        4 : { 
             map: MAP_TUTO6(),//transversale
             desc: "Normal",
             size: 40,
@@ -138,9 +138,9 @@ export const LEVELS = {
         },
         9 : { 
             map: MAP_TUTO7(),//transversale
-            desc: "Normal",
+            desc: "Nightmare",
             size: 40,
-            time: 200,
+            time: 100,
             player: {l: 14, c: 2},
             obstacles: [ 
 
@@ -169,22 +169,22 @@ export const LEVELS = {
             ],
             exit: { l: 5, c: 22 } 
         },
-        8 : { 
+        5 : { 
             map: MAP_TUTO8(),
-            desc: "Hard",
+            desc: "Normal",
             size: 40,
-            time: 200,
+            time: 10,
             player: {l: 8, c: 2},
             obstacles: [ 
-            {type: "BlinkingPlatform", x: 4*40, y: 8.5*40, w: 680, h: 10, dX: 0, dY: 0, cycle: 3000, delay: 0 } 
+                {type: "BlinkingPlatform", x: 4*40, y: 8.5*40, w: 680, h: 10, dX: 0, dY: 0, cycle: 3000, delay: 0 } 
             ],
             exit: { l: 7, c: 22 } 
         },
         7 : { 
             map: MAP_MOY(),
-            desc: "Normal",
+            desc: "Hard",
             size: 40,
-            time: 200,
+            time: 40,
             player: {l: 15, c: 2},
             obstacles: [ 
             {type: "BlinkingPlatform", x: 2.5*40, y: 9.5*40, w: 100, h: 10, dX: 0, dY: 0, cycle: 3000, delay: 0 }, 
@@ -199,17 +199,17 @@ export const LEVELS = {
             ],
             exit: { l: 11, c: 20 } 
         },
-        5 : { 
+        8 : { 
             map: MAP_10(),
-            desc: "Normal",
+            desc: "Hard",
             size: 40,
-            time: 200,
+            time: 30,
             player: {l: 15, c: 2},
             obstacles: [ 
             {type: "Platform", x: 3*40, y: 13*40, w: 850, h: 10, dX: 0, dY: 160, cycle: 2000 },
             
-            {type: "Platform", x: 3*40, y: 6*40, w: 100, h: 10, dX: 300, dY: 0, cycle: 3000 },
-            {type: "Platform", x: 12*40, y: 6*40, w: 100, h: 10, dX: 300, dY: 0, cycle: 3000 },
+            {type: "Platform", x: 4*40, y: 6*40, w: 100, h: 10, dX: 300, dY: 0, cycle: 3000 },
+            {type: "Platform", x: 14*40, y: 6*40, w: 100, h: 10, dX: 300, dY: 0, cycle: 3000 },
  
             
             ],

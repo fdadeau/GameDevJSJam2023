@@ -116,7 +116,7 @@ export class Level {
     }
 
     isOnExit(x,y,w) {
-        return x-w > this.exit.c * this.size && x+w < (this.exit.c+1)*this.size && y > this.exit.l * this.size && y <= this.size*(this.exit.l +1);
+        return x-w/2 > this.exit.c * this.size && x+w/2 < (this.exit.c+1)*this.size && y > this.exit.l * this.size && y <= this.size*(this.exit.l +1);
     }
 
 }
