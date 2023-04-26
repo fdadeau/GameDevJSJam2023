@@ -60,15 +60,18 @@ export class Game {
             if (this.level.time <= 0) {
                 this.state = TIME_OUT;
                 audio.pause("tic");
+                audio.playSound("timeout", "player", 0.7, false);
                 return;
             }
             if (this.level.player.dead) {
                 this.state = GAME_OVER;
                 audio.pause("tic");
+                audio.playSound("death", "player", 0.7, false);
                 return true;
             }
             if (this.level.player.complete) {
                 this.state = COMPLETED;
+                audio.playSound("victory", "player", 0.7, false);
                 audio.pause("tic");
             }
         }

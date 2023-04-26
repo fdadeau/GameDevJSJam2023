@@ -13,7 +13,10 @@ const data = {
     // musics
     "tictac": "./sounds/tictac.mp3",
     // Sounds
-    "bzzt": "./sounds/bzzt.mp3"
+    "bzzt": "./sounds/bzzt.mp3",
+    "victory": "./sounds/victory.mp3",
+    "death": "./sounds/wilhelm.mp3",
+    "timeout": "./sounds/timeout.mp3"
 }
 
 /***
