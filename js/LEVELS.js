@@ -73,7 +73,7 @@ export const LEVELS = {
         time: 30,
         obstacles: [ 
             {type: "Platform", x: 22*40, y: 16*40, w: 80, h: 10, dX: 0, dY: 180, cycle: 2000 }, 
-            {type: "Platform", x: 23*40, y: 13*40, w: 80, h: 10, dX: 0, dY: 180, cycle: 2000 }, 
+            {type: "Platform", x: 23*40, y: 12.5*40, w: 80, h: 10, dX: 0, dY: 180, cycle: 2000 }, 
             {type: "SlidingWall", x: 9.5*40, y: 14*40, w: 20, h: 120, dX: 220, dY: 0, cycle: 2000 }, 
             {type: "BlinkingPlatform", x: 1*40, y: 6*40, w: 80, h: 10, dX: 0, dY: 0, cycle: 2000, delay: 1500 }, 
             {type: "BlinkingPlatform", x: 3*40, y: 8*40, w: 80, h: 10, dX: 0, dY: 0, cycle: 2000, delay: 1000 }, 

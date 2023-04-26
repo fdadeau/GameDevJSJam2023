@@ -200,7 +200,7 @@ export class Player {
             this.speedY = 0;
         }
 
-        if (this.y >= level.world.height) {
+        if (this.y >= level.world.height-10) {
             this.dead = true;
         }
 
@@ -243,7 +243,7 @@ export class Player {
         let newY = this.y + this.speedY * dt;
 
         // check if out of bounds --> dead
-        if (newY >= level.world.height) {
+        if (newY >= level.world.height - 10) {
             this.y = newY;
             this.dead = true;
             return;
