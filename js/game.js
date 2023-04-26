@@ -12,6 +12,9 @@ const LOADING = 0, MENU = 5, LEVEL_SELECTION = 8, IN_GAME = 10, PAUSE = 15, GAME
 
 const START_LEVEL = 6;
 
+const DELAY = 60;
+let frame = -10, df = 1, delay = DELAY, max = 50;
+
 export class Game {
 
     constructor(cvs) {
@@ -38,6 +41,20 @@ export class Game {
     }
 
     update(dt) {
+        if (this.state == MENU) {
+            delay -= dt;
+            if (delay < 0) {
+                frame += df;
+                if (df < 0 && frame > 0 && frame < 8) {
+                    frame = 0;
+                }
+                if (frame > max || frame < -10) {
+                    df *= -1;
+                }
+                delay = DELAY;
+            }
+            return;
+        }
         if (this.state == IN_GAME) {
             this.level.update(dt, this.keys);
             if (this.level.time <= 0) {
@@ -63,11 +80,14 @@ export class Game {
         if (this.state == LOADING || this.state == MENU) {
             if (this.state == MENU) {
                 this.ctx.drawImage(data["title"], 60, 100, 700, 60);
+                if (frame <= 32) {
+                    this.ctx.drawImage(data["timeR"], 0, (frame < 0 ? 0 : frame * 64), 64, 64, 360, HEIGHT/2, 100, 100);
+                }
             }
             this.ctx.textAlign = "center";
             this.ctx.font = "bold 20px arial";
             this.ctx.fillStyle = "#A00";
-            this.ctx.fillText(this.msg, WIDTH / 2, HEIGHT * 0.7);
+            this.ctx.fillText(this.msg, WIDTH / 2, HEIGHT * 0.8);
             return;
         }
         if (this.state == LEVEL_SELECTION) {
