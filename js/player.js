@@ -157,10 +157,10 @@ export class Player {
         // if no key is pressed, increase or decrease to reach 0 
         if (!keys.left && !keys.right) {
             if (this.speedX > 0) {
-                this.speedX = this.speedX - ACCELERATION <= 0 ? 0 : this.speedX - ACCELERATION * dt / (1000/60);
+                this.speedX = this.speedX - ACCELERATION * dt / (1000/60) <= 0 ? 0 : this.speedX - ACCELERATION * dt / (1000/60);
             }
             else if (this.speedX < 0) {
-                this.speedX = this.speedX + ACCELERATION >= 0 ? 0 : this.speedX + ACCELERATION * dt / (1000/60);
+                this.speedX = this.speedX + ACCELERATION * dt / (1000/60) >= 0 ? 0 : this.speedX + ACCELERATION * dt / (1000/60);
             }
         }
 
