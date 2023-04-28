@@ -58,7 +58,7 @@ export const LEVELS = {
         ],
         exit: { l: 2, c: 2 },
         texts : [ 
-            { x: 200, y: 300, text: "Adjust time with Q/D (-/+ 0.5s)" },  
+            { x: 200, y: 300, text: "Adjust time with A/D (-/+ 0.5s)" },  
             { x: 200, y: 330, text: "then press S to jump in time!" },  
             { x: 440, y: 510, text: "Pass through sliding walls..." },  
             { x: 700, y: 250, text: "...or reach high platforms!" },  

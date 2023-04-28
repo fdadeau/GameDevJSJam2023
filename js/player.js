@@ -148,19 +148,19 @@ export class Player {
         // horizontal movement
         if (keys.right) {
             this.lastDir = 1;
-            this.speedX = this.speedX >= MAX_SPEED ? MAX_SPEED : this.speedX + ACCELERATION;
+            this.speedX = this.speedX >= MAX_SPEED ? MAX_SPEED : this.speedX + ACCELERATION * dt / (1000/60);
         }
         if (keys.left) {
             this.lastDir = -1;
-            this.speedX = this.speedX <= -MAX_SPEED ? -MAX_SPEED : this.speedX - ACCELERATION;
+            this.speedX = this.speedX <= -MAX_SPEED ? -MAX_SPEED : this.speedX - ACCELERATION * dt / (1000/60);
         }
         // if no key is pressed, increase or decrease to reach 0 
         if (!keys.left && !keys.right) {
             if (this.speedX > 0) {
-                this.speedX = this.speedX - ACCELERATION <= 0 ? 0 : this.speedX - ACCELERATION;
+                this.speedX = this.speedX - ACCELERATION <= 0 ? 0 : this.speedX - ACCELERATION * dt / (1000/60);
             }
             else if (this.speedX < 0) {
-                this.speedX = this.speedX + ACCELERATION >= 0 ? 0 : this.speedX + ACCELERATION;
+                this.speedX = this.speedX + ACCELERATION >= 0 ? 0 : this.speedX + ACCELERATION * dt / (1000/60);
             }
         }
 
